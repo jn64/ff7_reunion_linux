@@ -1,118 +1,74 @@
-# Final Fantasy VII The Reunion Linux Install Guide
+# Final Fantasy VII (Steam) + The Reunion Linux Install Guide
 
-These instructions are for the Steam version of FF7. Unfortunately, a legitimate Steam install of FF7 with Proton does not create the necessary registry entries in the wine/proton prefix which The Reunion requires. There is also a wine DLL override necessary for The Reunion to load at all.
+## Requirements
 
-If you have the original CDs, there is a video guide here: https://www.youtube.com/watch?v=3nlpvEVLR_s </br>
-The installer on the original CDs will give you the necessary registry entries, as will installing through Steam on Windows, or Steam through Wine. I have exported the registry entries to .reg files here for your convenience. They are simple registry entries recording the existence of an installed program like any other, and are in no way malicious or illegal.
+- [Final Fantasy VII (Steam version)](https://store.steampowered.com/app/39140/FINAL_FANTASY_VII/)
+- protontricks — [install via your distro package manager, or flatpak if using Steam flatpak](https://github.com/Matoking/protontricks#installation)
+- [The Reunion](https://ff7.live/index.html) mod installer — latest download as of this writing is `The_Reunion_R06z_march_01_2023.exe`
+- [ff7_steam.reg](https://raw.githubusercontent.com/jn64/ff7_reunion_linux/69b6a85810852ec49c2a09f5c3c0aacfb0563942/ff7_steam.reg)
+## Installation
 
-## Essentials
+1. Install FF7 in Steam.
 
-wine</br>
-winetricks</br>
-steam + proton</br>
-protontricks</br>
-lutris (optional)</br>
-[Final Fantasy VII 1.02 Official Patch](https://community.pcgamingwiki.com/files/file/600-final-fantasy-vii-102-official-patch/) (non-steam only)</br>
-[The Reunion](https://ff7.live/index.html)</br>
-	
-## Instructions
+2. Run the game once, to create the wineprefix and ensure it works.
 
-### Steam / Proton
+   It may take a few minutes; don't force quit it from Steam early if you don't see any window appear. Once you see the FF7 launcher, the game itself should start quickly.
 
-#### 1. Install FF7 through Steam</br>
+   Quit the game _and_ launcher before the next step.
 
-- Select FF7 proton version in steam</br>
-- Download and install FF7
-- Run game once through steam to create proton/wine prefix, and to ensure game is working</br>
+3. Install The Reunion:
 
-#### 2. Install Reunion with protontricks
+   - Run the following command in terminal:
 
-`protontricks 39140 uninstaller`</br>
+     ```sh
+     protontricks 39140 uninstaller
+     ```
 
-- Click 'install', browse to and run The_Reunion_R06j.exe (or newer version)</br>
-- Browse and install to `Z:/home/user/.steam/steam/steamapps/common/FINAL FANTASY VII/`</br>
+   - Click _Install_, browse to your download of `The_Reunion_R06z_march_01_2023.exe`. You may need to change the drop-down in the file browser to show exe's.
+   - When asked for the install location, browse to `Z:/home/$USER/.local/share/Steam/steamapps/common/FINAL FANTASY VII/`
 
-#### 3. Install the registry entries necessary for The Reunion to run
+4. Install the FF7 Windows registry entries (required by The Reunion):
 
-`protontricks 39140 regedit`</br>
+   - Run the following command in terminal:
 
-- Registry > Import Registry File > ff7_steam.reg</br>
+     ```sh
+     protontricks 39140 regedit
+     ```
 
-#### 4. Add wine DLL override necessary for The Reunion to run
+   - Click _Registry > Import Registry File_ and browse to your download of `ff7_steam.reg`
 
-- Add Steam FF7 launch options: `export WINEDLLOVERRIDES="ddraw=n,b"; %command%`
+4. In Steam, set the launch options for FF7 like this:
 
-### Lutris / Wine
+   ```sh
+   WINEDLLOVERRIDES='ddraw=n,b' %command%
+   ```
 
-#### 1. Install FF7 through Steam</br>
+   If you use [GameMode](https://github.com/FeralInteractive/gamemode) and/or [MangoHud](https://github.com/flightlessmango/MangoHud), you can add them as usual:
 
-- Select FF7 proton version in steam</br>
-- Download and install FF7
+   ```sh
+   gamemoderun mangohud WINEDLLOVERRIDES='ddraw=n,b' %command%
+   ```
 
-#### 2. Install Final Fantasy VII 1.02 Official Patch</br>
+## Notes
 
-- Copy ff7.exe and FF7Config.exe to `~/.steam/steam/steamapps/common/FINAL FANTASY VII/`</br>
+- Please read The Reunion's help files and edit the `Options.ini` before playing.
+- To check if The Reunion is working, press `Backspace + L` (keyboard) or `Select + Circle/A` (controller) to skip movie cutscenes.
 
-#### 3. Add FF7 to Lutris with DLL override and registry entries
 
-- Add a new game</br>
-- Game info</br>
-Name: FINAL FANTASY VII</br>
-- Game options</br>
-Runner: Wine</br>
-Executable: `~/.steam/steam/steamapps/common/FINAL FANTASY VII/ff7.exe` (NOT steam's ff7_en.exe)</br>
-Wine prefix: `~/.local/share/wineprefixes/ff7` </br>
-- Runner options</br>
-Wine version: System </br>
-DLL Overrides </br>
-key: `ddraw`</br>
-value: `n,b`</br>
-- FINAL FANTASY VII > Wine button > Wine registry</br>
-Registry > Import Registry File > ff7_steam.reg</br>
+### File locations
 
-#### 4. Install The Reunion with Lutris
+- The Reunion and related mod files will be inside the FF7 install folder at:
 
-- FINAL FANTASY VII > Wine button > Run EXE inside Wine prefix</br>
-Browse to and run The_Reunion_R06j.exe (or newer version)</br>
-Browse and install to `Z:/home/user/.steam/steam/steamapps/common/FINAL FANTASY VII/`</br>
-  
-### CLI / Wine
+  ```
+  ~/.local/share/Steam/steamapps/common/FINAL FANTASY VII/The Reunion/
+  ```
 
-#### 1. Install FF7 through Steam</br>
+- FF7 config files are in the wineprefix at:
 
-- Select FF7 proton version in steam</br>
-- Download and install FF7
+  ```
+  ~/.local/share/Steam/steamapps/compatdata/39140/pfx/drive_c/users/steamuser/My Documents/Square Enix/FINAL FANTASY VII Steam/
+  ```
 
-#### 2. Install Final Fantasy VII 1.02 Official Patch</br>
+### Other mods
 
-- Copy ff7.exe and FF7Config.exe to `~/.steam/steam/steamapps/common/FINAL FANTASY VII/`</br>
-
-#### 3. Install the Reunion
-`export WINEPREFIX="~/.local/share/wineprefixes/ff7"`</br>
-`wine uninstaller`</br>
-click 'install', browse to and run The_Reunion_R06j.exe</br>
-Browse and install to `Z:/home/user/.steam/steam/steamapps/common/FINAL FANTASY VII/`</br>
-
-#### 4. Install the registry entries necessary for The Reunion to run
-`export WINEPREFIX="~/.local/share/wineprefixes/ff7"`</br>
-`wine regedit`</br>
-Registry > Import Registry File > ff7_steam.reg</br>
-
-#### 5. Add wine DLL override necessary for The Reunion to run, and play.
-`export WINEPREFIX="~/.local/share/wineprefixes/ff7"`</br>
-`export WINEDLLOVERRIDES="ddraw=n,b"`</br>
-`wine "~/.steam/steam/steamapps/common/FINAL FANTASY VII/ff7.exe"`</br>
-
-## Playing
-
-- Please read The_Reunion/The Reunion - Help.rtf</br>
-- Make sure to edit The_Reunion/Options.ini to your preference</br>
-- You should be able to skip cutscenes with `Backspace + L`, if so then The Reunion is working</br>
-
-## Troubleshooting
-
-- Use winehq-stable or winehq-staging instead of wine from your distro, or use wine-staging-tkg or proton-ge
-- Steam: delete the proton prefix at `~/.steam/steam/steamapps/compatdata/39140` and try again
-- Steam: add `PROTON_LOG=1` to your FF7 launch options and check your home dir for the log file
-- Lutris/CLI: delete the wine prefix at `~/.local/share/wineprefixes/ff7` and try again
-- Lutris: Right click FINAL FANTASY VII > Show logs
+[See here for The Reunion compatible mods](https://ff7.live/reunion-mods.html), like SYW v4 (upscaled textures) and Field Icons (for Xbox controller icons).
